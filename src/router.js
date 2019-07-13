@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import Home from './views/Home.vue';
 import landing from './views/landing.vue';
+import editor from './views/Editor.vue';
 
 Vue.use(Router);
 
@@ -27,5 +28,10 @@ export default new Router({
       // which is lazy-loaded when the route is visited.
       component: () => import( /* webpackChunkName: "video" */ './views/Video.vue'),
     },
+    {
+      path: '/editor',
+      name: 'editor',
+      component: editor
+    }
   ],
 });
