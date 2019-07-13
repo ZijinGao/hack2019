@@ -13,7 +13,7 @@
             class="upload"
             accept="pdf"
             drag
-            action="https://jsonplaceholder.typicode.com/posts/"
+            :action="addr+this.videoTime"
             :on-success="uploadSuccess"
             multiple
           >
@@ -25,7 +25,7 @@
           </el-upload>
         </el-main>
         <el-aside width="50%">
-          <PDFCard v-if="this.isUploaded" :page="1" :videoTime="videoTime" class="pdf" />
+          <PDFCard v-if="this.isUploaded" :page="1" :pdfURL="this.pdfURL"  :videoTime="videoTime" class="pdf" />
         </el-aside>
       </el-container>
     </div>
@@ -82,11 +82,13 @@ export default {
     return {
       posterURL: "",
       videoURL:
-        "https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-576p.mp4",
+        "",
       discussions: [],
       attachments: [],
       isUploaded: false,
-      videoTime: 0
+      pdfURL: '',
+      videoTime: 0,
+      addr:'http://localhost:8080/upload/pdf?page='+parseInt(Math.random()*3) + '&vid=1&time=',
     };
   },
   components: {
@@ -101,8 +103,16 @@ export default {
   },
   methods: {
     getVideoInfo() {
-      console.log("Getting Vid INFO");
-      console.log(this.videoURL);
+        console.log("Getting video info.");
+      this.axios
+        .get("http://localhost:8080/video?vid=1")
+        .then(response => {
+          console.log(response.data);
+          this.videoURL = "http://localhost:8080/" + response.data.v.url;
+          console.log(this.videoURL);
+
+        })
+        .catch(e => console.log(e));
     },
     updateVideoTime() {
       this.videoTime = this.$refs.plyr.player.currentTime;
@@ -110,7 +120,8 @@ export default {
     },
     uploadSuccess(response, file, fileList) {
       this.isUploaded = true;
-      console.log(this.isUploaded);
+      this.pdfURL = 'http://localhost:8080' + response.path;
+      console.log(this.pdfURL)
     }
   }
 };

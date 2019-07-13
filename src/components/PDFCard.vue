@@ -1,5 +1,5 @@
 <template>
-  <pdf scale="page-width" src="http://localhost:8080/demo.pdf" v-bind:page="this.$props.page">
+  <pdf scale="page-width" :src="this.$props.pdfURL" v-bind:page="this.$props.page">
     <template slot="loading">loading content here...</template>
   </pdf>
 </template>
@@ -10,7 +10,8 @@ import pdf from "pdfvuer";
 export default {
   props: {
     page: Number,
-    videoTime: Number
+    videoTime: Number,
+    pdfURL: String
   },
   mounted() {
     console.log(this.videoTime);

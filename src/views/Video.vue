@@ -10,9 +10,8 @@
             </video>
           </vue-plyr>
         </el-main>
-        <el-aside width="25%">
-          <Drawer class="drawer" :content="currentDrawer" :vidTime="vidTime"></Drawer>
-        </el-aside>
+        
+        <Drawer class="drawer" :content="currentDrawer" :vidTime="vidTime"></Drawer>
       </el-container>
     </div>
   </div>
@@ -67,18 +66,27 @@ export default {
         .sort((a, b) => {
           return a.time - b.time;
         });
-      console.log(sec);
+      this.currentDrawer.attachments = this.attachments
+        .filter(e => {
+          return e.time < sec + 5 && e.time > sec - 5;
+        })
+        .sort((a, b) => {
+          return a.time - b.time;
+        });
+      // console.log(sec);
     },
     getVideoInfo() {
       console.log("Getting video info.");
       this.axios
-        .get("http://10.209.11.173:8080/video?vid=1")
+        .get("http://localhost:8080/video?vid=1")
         .then(response => {
           console.log(response.data);
-          this.videoURL = "http://10.209.11.173:8080/" + response.data.v.url;
+          this.videoURL = "http://localhost:8080/" + response.data.v.url;
           console.log(this.videoURL);
 
           this.discussions = response.data.comments;
+          this.attachments = response.data.attachments;
+
         })
         .catch(e => console.log(e));
     }
