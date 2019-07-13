@@ -9,19 +9,23 @@
               <source controls :src="videoURL" type="video/mp4" size="720" />
             </video>
           </vue-plyr>
-            <el-upload 
-                class="upload"
-                accept="pdf"
-                drag
-                action="https://jsonplaceholder.typicode.com/posts/"
-                :on-success="uploadSuccess"
-                multiple>
-                <i class="el-icon-upload"></i>
-                <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-            </el-upload>
+          <el-upload
+            class="upload"
+            accept="pdf"
+            drag
+            action="https://jsonplaceholder.typicode.com/posts/"
+            :on-success="uploadSuccess"
+            multiple
+          >
+            <i class="el-icon-upload"></i>
+            <div class="el-upload__text">
+              Drag and Drop, or
+              <em>Click to Upload</em>
+            </div>
+          </el-upload>
         </el-main>
         <el-aside width="50%">
-            <PDFCard v-if="this.isUploaded" :page=1 class="pdf" />
+          <PDFCard v-if="this.isUploaded" :page="1" :videoTime="videoTime" class="pdf" />
         </el-aside>
       </el-container>
     </div>
@@ -30,18 +34,18 @@
 
 <style>
 .upload {
-    padding-top: 20px;
+  padding-top: 20px;
 }
 
 .pdf {
-    width:100%;
-    margin:20px;
-    height: 500px;
-    overflow-x:hidden;
+  width: 100%;
+  margin: 20px;
+  height: 500px;
+  overflow-x: hidden;
 }
 
 .pdf::-webkit-scrollbar {
-    display: none;
+  display: none;
 }
 
 .drawer {
@@ -59,7 +63,6 @@
   top: 200px;
 }
 
-
 .el-notification {
   position: absolute;
   left: 55%;
@@ -71,6 +74,7 @@
 // @ is an alias to /src
 import Drawer from "../components/Drawer.vue";
 import PDFCard from "../components/PDFCard.vue";
+import { setInterval } from "timers";
 
 export default {
   name: "about",
@@ -81,7 +85,8 @@ export default {
         "https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-576p.mp4",
       discussions: [],
       attachments: [],
-      isUploaded: false
+      isUploaded: false,
+      videoTime: 0
     };
   },
   components: {
@@ -90,24 +95,22 @@ export default {
   },
   mounted() {
     this.getVideoInfo();
+    setInterval(() => {
+      this.updateVideoTime();
+    }, 1000);
   },
   methods: {
     getVideoInfo() {
       console.log("Getting Vid INFO");
       console.log(this.videoURL);
     },
-
-    uploadSuccess(response, file, fileList){
-        this.isUploaded = true;
-        console.log(this.isUploaded)
+    updateVideoTime() {
+      this.videoTime = this.$refs.plyr.player.currentTime;
+      console.log(this.videoTime);
     },
-
-    open2() {
-      this.$notify({
-        title: "自定义位置",
-        message: "右下角弹出的消息",
-        position: "bottom-right"
-      });
+    uploadSuccess(response, file, fileList) {
+      this.isUploaded = true;
+      console.log(this.isUploaded);
     }
   }
 };

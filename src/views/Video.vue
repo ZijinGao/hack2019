@@ -1,16 +1,16 @@
 <template>
-  <div class="about">
+  <div class="video">
     <div>
       <link rel="stylesheet" href="https://cdn.plyr.io/3.5.6/plyr.css" />
       <el-container>
-        <el-main class="videoWrapper">
+        <el-main>
           <vue-plyr ref="plyr">
             <video poster="poster.png" :src="videoURL">
               <source :src="videoURL" type="video/mp4" size="720" />
             </video>
           </vue-plyr>
         </el-main>
-        <el-aside width="20%">
+        <el-aside width="25%">
           <Drawer class="drawer" :content="currentDrawer" :vidTime="vidTime"></Drawer>
         </el-aside>
       </el-container>
@@ -19,34 +19,21 @@
 </template>
 
 <style>
-.drawer {
+/* .drawer {
   padding-top: 20px;
-}
+} */
 
-.videoWrapper {
+/* .videoWrapper {
   padding-top: 20px;
-}
-.popup {
-  background-color: blue;
-  position: absolute;
-  z-index: 999999;
-  top: 200px;
-}
-
-.el-notification {
-  position: absolute;
-  left: 55%;
-  bottom: 10%;
-}
+} */
 </style>
 
 <script>
 // @ is an alias to /src
 import Drawer from "../components/Drawer.vue";
-import { setTimeout } from "timers";
 
 export default {
-  name: "about",
+  name: "video",
   data: function() {
     return {
       posterURL: "",
@@ -85,10 +72,10 @@ export default {
     getVideoInfo() {
       console.log("Getting video info.");
       this.axios
-        .get("http://10.209.11.173:8888/video?vid=1")
+        .get("http://10.209.11.173:8080/video?vid=1")
         .then(response => {
           console.log(response.data);
-          this.videoURL = "http://10.209.11.173:8888/" + response.data.v.url;
+          this.videoURL = "http://10.209.11.173:8080/" + response.data.v.url;
           console.log(this.videoURL);
 
           this.discussions = response.data.comments;

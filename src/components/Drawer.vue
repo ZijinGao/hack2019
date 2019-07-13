@@ -25,7 +25,7 @@
 
         <el-collapse-item name="99">
           <template slot="title">
-            Ask a question about the current section.
+            Ask a question about the current section
             <i class="header-icon el-icon-question"></i>
           </template>
           <div style="margin: 20px 0;"></div>
@@ -72,12 +72,18 @@ export default {
       console.log(val);
     },
     postNewQuestion() {
-      this.axios.post("http://10.209.11.173:8888/video", {
-        time: this.vidTime,
-        content: this.newQuestion,
-        tar: "",
-        vid: "1"
-      });
+      this.axios
+        .post("http://10.209.11.173:8080/video", {
+          time: this.vidTime,
+          content: this.newQuestion,
+          tar: "",
+          vid: "1"
+        })
+        .then(response => {
+          this.newQuestion = "";
+          this.newDetail = "";
+        });
+      2;
     }
   }
 };
@@ -85,11 +91,6 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-.main {
-  height: 100%;
-}
-.list-item {
-}
 .list-enter-active,
 .list-leave-active {
   transition: all 0.5s;
