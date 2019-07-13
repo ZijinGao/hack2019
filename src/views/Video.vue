@@ -3,7 +3,7 @@
     <div>
       <link rel="stylesheet" href="https://cdn.plyr.io/3.5.6/plyr.css" />
       <el-container>
-        <el-main>
+        <el-main class="videoWrapper">
           <vue-plyr ref="plyr">
             <video poster="poster.png" :src="videoURL">
               <source :src="videoURL" type="video/mp4" size="720" />
@@ -11,7 +11,7 @@
           </vue-plyr>
         </el-main>
         <el-aside width="20%">
-          <Drawer :content="currentDrawer" :vidTime="vidTime"></Drawer>
+          <Drawer class="drawer" :content="currentDrawer" :vidTime="vidTime"></Drawer>
         </el-aside>
       </el-container>
     </div>
@@ -19,6 +19,13 @@
 </template>
 
 <style>
+.drawer {
+  padding-top: 20px;
+}
+
+.videoWrapper {
+  padding-top: 20px;
+}
 .popup {
   background-color: blue;
   position: absolute;
