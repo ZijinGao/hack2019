@@ -1,38 +1,49 @@
 <template>
-  <div>
-    <el-card class="main">
+  <div class="side" v-bind:class="{expand: isDisplaying}">
+    <el-card class="main" >
       <el-collapse v-model="activeNames" @change="handleChange">
-        <el-collapse-item title="一致性 Consistency" name="1">
-          <div>与现实生活一致：与现实生活的流程、逻辑保持一致，遵循用户习惯的语言和概念；</div>
-          <div>在界面中一致：所有的元素和结构需保持一致，比如：设计样式、图标和文本、元素的位置等。</div>
-        </el-collapse-item>
-        <el-collapse-item title="反馈 Feedback" name="2">
-          <div>控制反馈：通过界面样式和交互动效让用户可以清晰的感知自己的操作；</div>
-          <div>页面反馈：操作后，通过页面元素的变化清晰地展现当前状态。</div>
-        </el-collapse-item>
-        <el-collapse-item title="效率 Efficiency" name="3">
-          <div>简化流程：设计简洁直观的操作流程；</div>
-          <div>清晰明确：语言表达清晰且表意明确，让用户快速理解进而作出决策；</div>
-          <div>帮助用户识别：界面简单直白，让用户快速识别而非回忆，减少用户记忆负担。</div>
-        </el-collapse-item>
-        <el-collapse-item name="4">
+        <transition-group name="list" tag="p">
+           <el-collapse-item
+            v-for="item in content.attachments"
+            v-bind:key="item.time"
+            v-bind:name="item.ori"
+
+            class="list-item"
+          >
+            <template slot="title"> <strong style="color:#599EF8"><i class="el-icon-edit"></i> {{item.ori}} </strong> </template>
+            <PDFCard :page="parseInt(item.page)" :pdfURL="'http://localhost:8080'+item.path"  class="pdf" />
+            
+          </el-collapse-item>
+          <el-collapse-item
+            v-for="item in content.discussions"
+            v-bind:key="item.time"
+            v-bind:name="item.time+item.question"
+            class="list-item"
+          >
+            <template slot="title">{{item.question}}</template>
+            <div>{{item.comments[0]}}</div>
+          </el-collapse-item>
+         
+        </transition-group>
+
+        <el-collapse-item name="99">
           <template slot="title">
-            输入新的问题
-            <i class="header-icon el-icon-question"></i>
+            <p>Ask a question about the current section
+            <i class="header-icon el-icon-question"></i></p>
           </template>
           <div style="margin: 20px 0;"></div>
-          <el-input type="textarea" autosize placeholder="请输入问题" v-model="textarea1"></el-input>
+          <el-input type="textarea" autosize placeholder="Question" v-model="newQuestion"></el-input>
           <div style="margin: 20px 0;"></div>
           <el-input
             type="textarea"
             :autosize="{ minRows: 2, maxRows: 4}"
-            placeholder="请输入详情"
-            v-model="textarea2"
+            placeholder="Detail"
+            v-model="newDetail"
           ></el-input>
           <div style="margin: 20px 0;"></div>
-          <el-button type="primary">
-            上传
-            <i class="el-icon-upload el-icon--right"></i>
+          <el-button @click="postNewQuestion" type="primary">
+            Ask Now
+            <i class="el-icon-message el-icon--right"></i>
           </el-button>
         </el-collapse-item>
       </el-collapse>
@@ -41,23 +52,49 @@
 </template>
 
 <script>
+import PDFCard from "../components/PDFCard.vue";
+
 export default {
   name: "Drawer",
+  mounted() {
+    // console.log(this.$props.content);
+  },
+  components:{PDFCard},
   props: {
-    handleClick: Function
+    content: Object,
+    vidTime: Number
   },
   data() {
     return {
-      activeNames: ["1"],
-      question: "",
-      detail: "",
-      textarea1: "",
-      textarea2: ""
+      activeNames: [],
+      newQuestion: "",
+      newDetail: "",
+      isDisplaying: false
     };
   },
   methods: {
     handleChange(val) {
-      console.log(val);
+      if (val[0]) {
+        if (val[0].split('.')[1] === 'pdf') {
+          this.isDisplaying = true;
+        }
+      } else {
+        if (this.isDisplaying) this.isDisplaying = false;
+      }
+    },
+    postNewQuestion() {
+      this.axios
+        .post("http://localhost:8080/video", {
+          time: this.vidTime,
+          content: this.newQuestion,
+          tar: "",
+          vid: "1"
+        })
+        .then(response => {
+          this.newQuestion = "";
+          this.newDetail = "";
+        });
+      2;
     }
   }
 };
@@ -65,7 +102,40 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-.main {
-  height: 100%;
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.5s;
 }
+.list-enter, .list-leave-to
+/* .list-leave-active for below version 2.1.8 */ {
+  opacity: 0;
+  transform: translateY(30px);
+}
+.expand {
+  width: 70%;
+  animation-name: expandWidget;
+  animation-duration: .7s;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease-out;
+}
+.side {
+  width: 25%;
+  // animation-name: shrinkWidget;
+  // animation-duration: 2s;
+  // animation-fill-mode: forwards;
+  // animation-timing-function: ease-out;
+}
+
+@keyframes expandWidget {
+  from {width: 25%;}
+  to {width: 75%;}
+}
+
+@keyframes shrinkWidget {
+  from {width: 75%;}
+  to {width: 25%;}
+}
+
+
+
 </style>
