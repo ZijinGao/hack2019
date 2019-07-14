@@ -23,13 +23,13 @@
           </span>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item>
-              <div id="settings">
+              <div id="settings" @click="gotoEditor">
                 <i class="el-icon-paperclip"></i>
                 <span>Upload</span>
               </div>
             </el-dropdown-item>
             <el-dropdown-item>
-              <div id="account">
+              <div id="account" @click="gotoEditor">
                 <i class="el-icon-s-custom"></i>
                 <span>Account</span>
               </div>
@@ -65,6 +65,9 @@ export default {
   },
   components: {},
   methods: {
+    gotoEditor() {
+      this.$router.push("/editor");
+    },
     handleDropdown() {
       console.log(this.isDown);
       this.isDown = !this.isDown;

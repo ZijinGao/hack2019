@@ -25,7 +25,14 @@
           </el-upload>
         </el-main>
         <el-aside width="50%">
-          <PDFCard v-if="this.isUploaded" :page="1" :pdfURL="this.pdfURL"  :videoTime="videoTime" class="pdf" />
+          <img :src="getImgUrl('greeting.png')" class="placeholder" v-if="!this.isUploaded" />
+          <PDFCard
+            v-if="this.isUploaded"
+            :page="1"
+            :pdfURL="this.pdfURL"
+            :videoTime="videoTime"
+            class="pdf"
+          />
         </el-aside>
       </el-container>
     </div>
@@ -35,6 +42,11 @@
 <style>
 .upload {
   padding-top: 20px;
+}
+
+.placeholder {
+  padding-top: 20px;
+  width: 90%;
 }
 
 .pdf {
@@ -81,14 +93,16 @@ export default {
   data: function() {
     return {
       posterURL: "",
-      videoURL:
-        "",
+      videoURL: "",
       discussions: [],
       attachments: [],
       isUploaded: false,
-      pdfURL: '',
+      pdfURL: "",
       videoTime: 0,
-      addr:'http://localhost:8080/upload/pdf?page='+parseInt(Math.random()*3) + '&vid=1&time=',
+      addr:
+        "http://localhost:8080/upload/pdf?page=" +
+        parseInt(Math.random() * 3) +
+        "&vid=1&time="
     };
   },
   components: {
@@ -102,15 +116,18 @@ export default {
     }, 1000);
   },
   methods: {
+    getImgUrl(pic) {
+      // eslint-disable-next-line global-require,import/no-dynamic-require
+      return require(`../assets/${pic}`);
+    },
     getVideoInfo() {
-        console.log("Getting video info.");
+      console.log("Getting video info.");
       this.axios
         .get("http://localhost:8080/video?vid=1")
         .then(response => {
           console.log(response.data);
           this.videoURL = "http://localhost:8080/" + response.data.v.url;
           console.log(this.videoURL);
-
         })
         .catch(e => console.log(e));
     },
@@ -120,8 +137,8 @@ export default {
     },
     uploadSuccess(response, file, fileList) {
       this.isUploaded = true;
-      this.pdfURL = 'http://localhost:8080' + response.path;
-      console.log(this.pdfURL)
+      this.pdfURL = "http://localhost:8080" + response.path;
+      console.log(this.pdfURL);
     }
   }
 };
